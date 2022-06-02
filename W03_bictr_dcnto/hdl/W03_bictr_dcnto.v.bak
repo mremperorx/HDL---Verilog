@@ -1,0 +1,43 @@
+//---------------------------------------------------------------------------------------
+// Universitatea Transilvania din Brasov
+// Proiect     : Limbaje de descriere hardware
+// Autor       : <ALBU C>
+// Data        : <4.02.2021>
+//---------------------------------------------------------------------------------------
+// Descriere   : <Up/Down Binary Counter with Dynamic count-to Flag>
+//---------------------------------------------------------------------------------------
+module DW03_bictr_dcnto_tb( 
+          
+		        
+           input [width-1 : 0] count_to, 
+           input up_dn,  
+           input load,  
+           input cen,  
+           input clk,  
+           input reset, 
+           output [width-1 : 0] count, 
+           output tercnt  		   
+);  
+
+parameter width = 8;  
+
+
+     always @(posedge(clk) or negedge(reset)) begin
+        if(~reset | ( count_to==4'b1111 & up_dn==1'b1)) 
+            count_to <=  1'b0;
+		else if(~reset | (count_to==4'b0000 & up_dn==1'b0)) 
+            count_to <=  4'b1111;
+        else if (~load)
+            count_to <= data;
+        else begin
+            if(cen & up_dn )    
+            count_to <= count_to + 1'b1;
+            else  if(cen & ~up_dn )    
+             count_to <= count_to - 1'b1; 
+        end 
+     end  
+	  assign tercnt=((up_dn==1'b1 & count_to==4'b1000)|(up_dn==1'b0 & count_to==4'b0001))?  1'b1:
+										1'b0;
+
+	 
+endmodule
